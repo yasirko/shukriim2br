@@ -8,7 +8,7 @@ def check_conditions(tickers):
     
     for ticker in tickers:
         # جلب البيانات التاريخية
-        data = yf.download(ticker, period="1y", interval="1d")
+        data = yf.download(ticker, period="1y", interval="1m")
         
         # التأكد من وجود بيانات كافية
         if len(data) < 6:
