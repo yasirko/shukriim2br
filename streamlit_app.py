@@ -3,7 +3,7 @@ import pandas as pd
 import streamlit as st
 
 # دالة للتحقق من الشروط
-def check_conditions(tickers, interval):
+def check_conditions(tickers, interval, selected_condition):
     results = []
     
     for ticker in tickers:
@@ -19,23 +19,39 @@ def check_conditions(tickers, interval):
         high = data['High'].values
         low = data['Low'].values
         volume = data['Volume'].values
-        
-        # تطبيق الشروط
-        if (close[-1] > high[-2] and   # close > high[1]
-            low[-1] < low[-2] and       # low < low[1]
-            close[-2] < close[-3] and   # close[1] < close[2]
-            close[-3] < close[-4] and   # close[2] < close[3]
-            close[-4] < close[-5]):     # close[4] < close[5]
-            name = yf.Ticker(ticker).info.get('longName', 'N/A')
-            # إزالة .SR إذا كان الرقم
-            ticker_clean = ticker.replace('.SR', '') if ticker[:-3].isdigit() else ticker
-            results.append({
-                'رمز الشركة': ticker_clean,
-                'اسم الشركة الانجليزي': name,
-                'الاغلاق': round(close[-1].item(), 2),  # تقريب سعر الإغلاق لخانتين عشريتين
-                'احجام التداول': f"{int(volume[-1]):,}",  # Corrected formatting
-            })
-    
+
+        # تطبيق الشروط بناءً على الاختيار
+        if selected_condition == "3 شموع سلبية":
+            if (close[-1] > high[-2] and   # close > high[1]
+                low[-1] < low[-2] and       # low < low[1]
+                close[-2] < close[-3] and   # close[1] < close[2]
+                close[-3] < close[-4] and   # close[2] < close[3]
+                close[-4] < close[-5]):     # close[4] < close[5]
+                name = yf.Ticker(ticker).info.get('longName', 'N/A')
+                ticker_clean = ticker.replace('.SR', '') if ticker[:-3].isdigit() else ticker
+                results.append({
+                    'رمز الشركة': ticker_clean,
+                    'اسم الشركة الانجليزي': name,
+                    'الاغلاق': round(close[-1].item(), 2),
+                    'احجام التداول': f"{int(volume[-1]):,}",
+                })
+
+        elif selected_condition == "4 شموع سلبية":
+            if (close[-1] > high[-2] and   # close > high[1]
+                low[-1] < low[-2] and       # low < low[1]
+                close[-2] < close[-3] and   # close[1] < close[2]
+                close[-3] < close[-4] and   # close[2] < close[3]
+                close[-4] < close[-5] and    # close[4] < close[5]
+                close[-5] < close[-6]):     # close[4] < close[5]
+                name = yf.Ticker(ticker).info.get('longName', 'N/A')
+                ticker_clean = ticker.replace('.SR', '') if ticker[:-3].isdigit() else ticker
+                results.append({
+                    'رمز الشركة': ticker_clean,
+                    'اسم الشركة الانجليزي': name,
+                    'الاغلاق': round(close[-1].item(), 2),
+                    'احجام التداول': f"{int(volume[-1]):,}",
+                })
+
     return results
 
 # واجهة المستخدم
@@ -98,19 +114,28 @@ interval_options = {
 
 selected_label = st.selectbox("اختر الفاصل:", options=list(interval_options.keys()), index=0)
 interval = interval_options[selected_label]
+
+# Dropdown for conditions
+condition_options = {
+    '٣ شموع سلبية': '3 شموع سلبية',
+    '٤ شموع سلبية': '4 شموع سلبية',
+}
+
+selected_condition = st.selectbox("اختر الشرط:", options=list(condition_options.keys()), index=0)
+
 # تحويل الإدخال إلى قائمة
 tickers = [ticker.strip() for ticker in tickers.splitlines() if ticker.strip()]
 
 if st.button("فحص الاسهم"):
     if tickers:
-        met_conditions = check_conditions(tickers, interval)  # Pass interval to check_conditions
+        met_conditions = check_conditions(tickers, interval, selected_condition)  # Pass condition to check_conditions
         
         # عرض النتائج في جدول
         if met_conditions:
             df = pd.DataFrame(met_conditions)
-            st.write("الشركات التي انطبقت عليها الاستؤاتيجية:")
+            st.write("الشركات التي انطبقت عليها الاستراتيجية المحددة:")
             st.dataframe(df)
         else:
-            st.write("لا توجد شركات تنطبق عليها الاستراتيجية.")
+            st.write("لا توجد شركات تنطبق عليها الاستراتيجية المحددة.")
     else:
         st.write("يرجى إدخال رموز الشركات.")
