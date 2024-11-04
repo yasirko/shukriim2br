@@ -3,7 +3,7 @@ import pandas as pd
 import streamlit as st
 
 # Set the page configuration
-st.set_page_config(page_title="فلتر الأسهم", page_icon="📈", layout="wide")
+st.set_page_config(page_title="فلتر الأسهم", page_icon="📈", layout="centered")
 
 # دالة للتحقق من الشروط
 def check_conditions(tickers, interval, selected_condition):
