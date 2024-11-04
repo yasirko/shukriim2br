@@ -21,7 +21,7 @@ def check_conditions(tickers, interval, selected_condition):
         volume = data['Volume'].values
 
         # تطبيق الشروط بناءً على الاختيار
-        if selected_condition == "3 شموع سلبية":
+        if selected_condition == '٣ شموع سلبية':
             if (close[-1] > high[-2] and   # close > high[1]
                 low[-1] < low[-2] and       # low < low[1]
                 close[-2] < close[-3] and   # close[1] < close[2]
@@ -36,13 +36,13 @@ def check_conditions(tickers, interval, selected_condition):
                     'احجام التداول': f"{int(volume[-1]):,}",
                 })
 
-        elif selected_condition == "4 شموع سلبية":
+        elif selected_condition == '٤ شموع سلبية':
             if (close[-1] > high[-2] and   # close > high[1]
                 low[-1] < low[-2] and       # low < low[1]
                 close[-2] < close[-3] and   # close[1] < close[2]
                 close[-3] < close[-4] and   # close[2] < close[3]
-                close[-4] < close[-5] and    # close[4] < close[5]
-                close[-5] < close[-6]):     # close[4] < close[5]
+                close[-4] < close[-5] and   # close[4] < close[5]
+                close[-5] < close[-6]):     # close[5] < close[6]
                 name = yf.Ticker(ticker).info.get('longName', 'N/A')
                 ticker_clean = ticker.replace('.SR', '') if ticker[:-3].isdigit() else ticker
                 results.append({
