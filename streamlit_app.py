@@ -329,6 +329,7 @@ ticker_to_arabic_name =  {
 
 
 interval_options = {
+    'يوم': '1d',
     '٣٠ دقيقة': '30m',
     'ساعة': '1h',
     'يوم': '1d',
